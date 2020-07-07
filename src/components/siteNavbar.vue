@@ -80,26 +80,25 @@ export default {
       }
     },
     computed:{
-      currentUser(){
-        const ema = this.$firebaseAuth.currentUser;
-        const user = this.users.filter(x => x.email == ema.email)
-        
-        return user;
+      currentUser () {
+            const ema = this.$firebaseAuth.currentUser;
+            const user = this.users.filter(x => x.email == ema.email)
+            return user;
       },
-      userType(){
+      userType () {
            const em = this.$firebaseAuth.currentUser;
            const user = this.users.filter(x => x.email == em.email);
-           return user
+           return user;
       },
-       dashboard(){
-        if(this.userType[0].type == 'Teacher')
-        {
-          return '/teacher/dashboard'
-        }else if(this.userType[0].type == 'Student'){
-          return '/student/dashboard'
-        }else{
-          return '/admin/dashboard'
-        }
+      dashboard () {
+            //  if(this.userType.type == "Teacher")
+            //   {
+            //       return '/teacher/dashboard'
+            //     }else if(this.userType.type == "Student"){
+            //       return '/student/dashboard'
+            //     }else{
+            //       return '/admin/dashboard'
+            //   }
       }
     },
     data(){

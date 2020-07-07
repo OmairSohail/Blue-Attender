@@ -124,13 +124,15 @@ export default {
    name:'signup',
    firestore(){
      return{
-        users: this.$fs.collection('blueAttender_Users')
+        users: this.$fs.collection('blueAttender_Users'),
+        count: this.$fs.collection('count')
      }
    },
    data()
    {
      return{
        users:this.users,
+       count:this.count,
        valid:false,
        fullname:'',
        email:'',
@@ -157,24 +159,32 @@ export default {
        ]
      }
    },
+   computed:{
+     countNo()
+     {
+       const c = this.count[0];
+       return c;
+     }
+   },
    methods:{
-     
      signup()
      {
        this.$refs.signupform.validate();
        
+       const randomid = Math.floor(100000 + Math.random() * 900000);
+       debugger 
        this.$firestore.users.add({
                 username:this.fullname,
                 email:this.email,
                 type:this.type,
                 joinDate:new Date().toDateString(),
-                rollNo: this.$store.state.rollno
+                rollNo: randomid
             });
-   
+         
+
        this.$firebaseAuth.createUserWithEmailAndPassword(this.email,this.password).then(()=>{
            this.snackbarsignup = true;
            this.textsignup = 'Account Has Been Created Successfully'
-           
            
            const user = this.$firebaseAuth.currentUser;
           //  const userId = user.uid
@@ -186,8 +196,7 @@ export default {
            this.$refs.signupform.reset(); 
            
            if(this.type === 'Student')
-           {
-              
+           {            
               this.$router.replace('/student/dashboard');
            } else if(this.type == 'Teacher'){
               this.$router.replace('/teacher/dashboard');
