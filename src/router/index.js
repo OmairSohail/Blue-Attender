@@ -1,6 +1,15 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import Home from '../views/Home.vue';
+import login from '../views/login.vue';
+import studentdashboard from '../views/studentDashboard.vue';
+import teacherdashboard from '../views/teacherDashboard.vue';
+import teacherAttendence from '../views/teacherAttendence.vue';
+import teacherStudents from '../views/teacherStudents.vue';
+import teacherSettings from '../views/teacherSettings.vue';
+import admindashboard from '../views/adminDashboard.vue';
+import signup from '../views/signup.vue';
+
 
 Vue.use(VueRouter)
 
@@ -9,6 +18,49 @@ Vue.use(VueRouter)
     path: '/',
     name: 'Home',
     component: Home
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: login
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: signup
+  },
+  {
+    path: '/student/dashboard',
+    name: 'studentdashboard',
+    component: studentdashboard
+  },
+  {
+    path: '/teacher/dashboard',
+    name: 'teacherdashboard',
+    component: teacherdashboard,
+    children:[
+      {
+        name: 'teacherAttendence',
+        path: 'attendence',
+        component:teacherAttendence
+      },
+      {
+        name: 'teacherStudents',
+        path: 'students',
+        component:teacherStudents
+      },
+      {
+        name: 'teacherSettings',
+        path: 'settings',
+        component:teacherSettings
+      }
+    ]
+  },
+  {
+    path: '/admin/dashboard',
+    name: 'admindashboard',
+    component: admindashboard,
+    
   },
   {
     path: '/about',
