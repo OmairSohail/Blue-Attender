@@ -7,12 +7,6 @@ import store from './store'
 
 Vue.config.productionTip = false
 
-
-
-
-
-
-
 // FIREBASE && VUE-FIRESTORE
 import firebaseConfig from './firebase';
 import VueFirestore from 'vue-firestore'
@@ -21,6 +15,7 @@ import app from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/storage';
+import 'firebase/database';
 // firebase.initializeApp(firebaseConfig);
 // if(!app.app.length)
 app.initializeApp(firebaseConfig);
@@ -30,9 +25,15 @@ Vue.use(VueFirestore,{
   enumerable: true 
 });
 
+// REALTIME PRESENCE SYSTEM FIREBASE
+
+
+
 Vue.prototype.$firebaseApp = app;
 Vue.prototype.$firebaseAuth = app.auth();
 Vue.prototype.$fs = app.firestore();
+Vue.prototype.$db = app.database();
+Vue.prototype.$timestamp = app.database.ServerValue.TIMESTAMP;
 window.firebaseStorage = app.storage();
 
 Vue.component('siteNavbar',require('./components/siteNavbar.vue').default);
