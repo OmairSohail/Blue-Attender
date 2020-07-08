@@ -64,20 +64,29 @@
                   ></v-text-field>
 
                   <v-text-field
-                    
                     label="Confirm Password"
                     name="confirmpassword"
                     prepend-icon="mdi-lock"
                     type="password"
                     :rules="confirmpasswordRule"
                     v-model="confirmpassword"
-                    
                     required
                   ></v-text-field>
 
                   <v-select
+                    label="Category"
                     :items="['Student','Teacher']"
                     v-model="type"
+                    :rules="categoryRule"
+                    @change="Class = null"
+                  ></v-select>
+                  
+                  <v-select
+                    label="Class"
+                    :items="[1,2,3,4,5,6,7,8,9,10]"
+                    :rules="classRule"
+                    v-model="Class"
+                    :multiple="type == 'Teacher' ? true : false" 
                   ></v-select>
 
                   <v-checkbox
@@ -114,8 +123,8 @@
         </v-btn>
       </template>
     </v-snackbar>
-    <!-- Footer -->
-    <site-footer/>
+    
+    <site-footer class="mt-4"/>
   </v-app>
 </template>
 
@@ -139,6 +148,7 @@ export default {
        confirmpassword:'',
        terms:false,
        type:'Student',
+       Class:'',
        snackbarsignup:false,
        textsignup:'',
        fullnameRule:[
@@ -155,15 +165,17 @@ export default {
        ],
        confirmpasswordRule:[
           v => (!!v && v) === this.password || 'Values do not match'
+       ],
+       categoryRule:[
+         v => !!v || 'Category is required',
+       ],
+       classRule:[
+         v => !!v || 'Class is required',
        ]
      }
    },
    computed:{
-     countNo()
-     {
-       const c = this.count[0];
-       return c;
-     }
+    
    },
    methods:{
      ...mapActions(['createUser']),
@@ -178,11 +190,12 @@ export default {
                 email:this.email,
                 type:this.type,
                 joinDate:new Date().toDateString(),
-                rollNo: randomid
+                rollNo: randomid,
+                class:this.Class
             });
          
 
-       this.$firebaseAuth.createUserWithEmailAndPassword(this.email,this.password).then(()=>{
+           this.$firebaseAuth.createUserWithEmailAndPassword(this.email,this.password).then(()=>{
            this.snackbarsignup = true;
            this.textsignup = 'Account Has Been Created Successfully';
            
@@ -195,53 +208,7 @@ export default {
            
 
             const u = this.users.filter(x => x.email == this.email);
-            
-
-             const uid = user.currentUser.uid;
-
-      // Create a reference to this user's specific status node.
-      // This is where we will store data about being online/offline.
-      const userStatusDatabaseRef = this.$db.ref('/status/' + uid);
-
-      // We'll create two constants which we will write to 
-      // the Realtime database when this device is offline
-      // or online.
-      const isOfflineForDatabase = {
-          state: 'offline',
-          last_changed: this.$timestamp,
-      };
-
-      const isOnlineForDatabase = {
-          state: 'online',
-          last_changed: this.$timestamp,
-      };
-
-      // Create a reference to the special '.info/connected' path in 
-      // Realtime Database. This path returns `true` when connected
-      // and `false` when disconnected.
-      this.$db.ref('.info/connected').on('value', function(snapshot) {
-          // If we're not currently connected, don't do anything.
-          if (snapshot.val() == false) {
-              return;
-          };
-
-          // If we are currently connected, then use the 'onDisconnect()' 
-          // method to add a set which will only trigger once this 
-          // client has disconnected by closing the app, 
-          // losing internet, or any other means.
-          userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(function() {
-              // The promise returned from .onDisconnect().set() will
-              // resolve as soon as the server acknowledges the onDisconnect() 
-              // request, NOT once we've actually disconnected:
-              // https://firebase.google.com/docs/reference/js/firebase.database.OnDisconnect
-            
-              // We can now safely set ourselves as 'online' knowing that the
-              // server will mark us as offline once we lose connection.
-              userStatusDatabaseRef.set(isOnlineForDatabase);
-            
-          });
-      });
-        
+          
             this.createUser({
                   email:u[0].email,
                   id:u[0].id,
