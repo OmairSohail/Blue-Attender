@@ -3,11 +3,18 @@ import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 import login from '../views/login.vue';
 import studentdashboard from '../views/studentDashboard.vue';
+
+
 import teacherdashboard from '../views/teacherDashboard.vue';
 import teacherAttendence from '../views/teacherAttendence.vue';
 import teacherStudents from '../views/teacherStudents.vue';
 import teacherSettings from '../views/teacherSettings.vue';
+
+
 import admindashboard from '../views/adminDashboard.vue';
+import adminClasses from '../views/adminClasses.vue';
+import adminSettings from '../views/adminSettings.vue';
+
 import signup from '../views/signup.vue';
 
 
@@ -60,6 +67,18 @@ Vue.use(VueRouter)
     path: '/admin/dashboard',
     name: 'admindashboard',
     component: admindashboard,
+    children:[
+      {
+        name:'adminClasses',
+        path:'classes',
+        component:adminClasses
+      },
+      {
+        name:'adminSettings',
+        path:'settings',
+        component:adminSettings
+      }
+    ]
     
   },
   {

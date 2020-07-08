@@ -120,19 +120,18 @@
 </template>
 
 <script>
+import {mapActions} from 'vuex';
 export default {
    name:'signup',
    firestore(){
      return{
-        users: this.$fs.collection('blueAttender_Users'),
-        count: this.$fs.collection('count')
+        users: this.$fs.collection('blueAttender_Users'),   
      }
    },
    data()
    {
      return{
        users:this.users,
-       count:this.count,
        valid:false,
        fullname:'',
        email:'',
@@ -167,12 +166,13 @@ export default {
      }
    },
    methods:{
+     ...mapActions(['createUser']),
      signup()
      {
        this.$refs.signupform.validate();
        
        const randomid = Math.floor(100000 + Math.random() * 900000);
-       debugger 
+     
        this.$firestore.users.add({
                 username:this.fullname,
                 email:this.email,
@@ -184,7 +184,7 @@ export default {
 
        this.$firebaseAuth.createUserWithEmailAndPassword(this.email,this.password).then(()=>{
            this.snackbarsignup = true;
-           this.textsignup = 'Account Has Been Created Successfully'
+           this.textsignup = 'Account Has Been Created Successfully';
            
            const user = this.$firebaseAuth.currentUser;
           //  const userId = user.uid
@@ -192,6 +192,20 @@ export default {
            user.updateProfile({
              displayName:this.fullname,
            })
+           
+
+            const u = this.users.filter(x => x.email == this.email);
+            
+         
+            this.createUser({
+                  email:u[0].email,
+                  id:u[0].id,
+                  joinDate:u[0].joinDate,
+                  rollNo:u[0].rollNo,
+                  type:u[0].type,
+                  username:u[0].username,
+                  profileImage:null
+           });
 
            this.$refs.signupform.reset(); 
            

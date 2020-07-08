@@ -71,7 +71,6 @@
 </template>
 
 <script>
-
 export default {
     name:'siteNavbar',
     firestore(){
@@ -91,14 +90,14 @@ export default {
            return user;
       },
       dashboard () {
-            //  if(this.userType.type == "Teacher")
-            //   {
-            //       return '/teacher/dashboard'
-            //     }else if(this.userType.type == "Student"){
-            //       return '/student/dashboard'
-            //     }else{
-            //       return '/admin/dashboard'
-            //   }
+             if(this.$store.state.user.type == "Teacher")
+              {
+                  return '/teacher/dashboard'
+                }else if(this.$store.state.user.type  == "Student"){
+                  return '/student/dashboard'
+                }else if(this.$store.state.user.type  == "Admin"){
+                  return '/admin/dashboard'
+                }
       }
     },
     data(){
@@ -133,6 +132,8 @@ export default {
             this.logoutText = 'User Signed Out Successfully';
             this.snackbarLogout = true;
             this.loggedIn = false;
+
+            this.$store.dispatch('deleteUser');
         }).catch((err)=>{
             this.logoutText = err.message;
             this.snackbarLogout = true;

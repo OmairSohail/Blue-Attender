@@ -6,15 +6,15 @@
       clipped
     >
       <v-list dense>
-        <v-list-item link>
+        <v-list-item link to="/admin/dashboard/classes">
           <v-list-item-action>
-            <v-icon>mdi-view-dashboard</v-icon>
+            <v-icon>mdi-file-account-outline</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>Dashboard</v-list-item-title>
+            <v-list-item-title>Classes</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item link>
+        <v-list-item link to="/admin/dashboard/settings">
           <v-list-item-action>
             <v-icon>mdi-cog</v-icon>
           </v-list-item-action>
@@ -42,21 +42,8 @@
           align="center"
           justify="center"
         >
-          <v-col class="shrink">
-            <v-tooltip right>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  :href="source"
-                  icon
-                  large
-                  target="_blank"
-                  v-on="on"
-                >
-                  <v-icon large>mdi-code-tags</v-icon>
-                </v-btn>
-              </template>
-              <span>Source</span>
-            </v-tooltip>
+          <v-col>
+              <router-view></router-view>
           </v-col>
         </v-row>
       </v-container>
@@ -74,9 +61,11 @@
     props: {
       source: String,
     },
-    data: () => ({
+    data (){
+      return{
       drawer: null,
-    }),
+      }
+    },
     created () {
       this.$vuetify.theme.dark = true
     },

@@ -52,7 +52,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn dark medium @click="login()">Login</v-btn>
+                <v-btn dark medium  @keyup.enter="login()" @click="login()">Login</v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -84,8 +84,14 @@
 import {mapActions} from 'vuex';
 export default {
     name:'login',
-    data: () => ({
-      
+    firestore(){
+      return{
+         users:this.$fs.collection('blueAttender_Users')
+      }
+    },
+    data(){
+        return{ 
+            users:this.users,      
             valid:false,
             email:'',
             password:'', 
@@ -99,8 +105,8 @@ export default {
             ],
             snackbar:false,
             text: 'Login Successfull'
-      
-    }),
+        }
+    },
     methods:{
        ...mapActions(['createUser']),
       login()
@@ -110,17 +116,28 @@ export default {
            
             this.snackbar = true;
             const user = this.$firebaseAuth.currentUser;
+
+            const u = this.users.filter(x => x.email == this.email);
+            
+         
             this.createUser({
-                id:user.uid,
-                username:user.displayName,
-                email:user.email,
+                  email:u[0].email,
+                  id:u[0].id,
+                  joinDate:u[0].joinDate,
+                  rollNo:u[0].rollNo,
+                  type:u[0].type,
+                  username:u[0].username,
+                  profileImage:null
            });
 
             this.$refs.login.reset();
             this.$router.replace('/');
+
          }).catch((err)=>{
+
             this.text = err.message;
             this.snackbar = true;
+
          })  
       }
     }

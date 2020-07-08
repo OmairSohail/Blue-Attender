@@ -5,19 +5,25 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    rollno:10000,
     user:[]
   },
   mutations: {
      addUser(state,payload)
      {
-        state.rollno++;
+        
         state.user = payload; 
+     },
+     removeUser(state,payload)
+     {
+        state.user = []; 
      }
   },
   actions: {
     createUser:({commit},payload) => {
       commit('addUser',payload);
+    },
+    deleteUser: ({commit}) => {
+      commit('removeUser')
     }
   },
   modules: {
