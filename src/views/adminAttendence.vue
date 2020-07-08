@@ -6,7 +6,7 @@
 
 <script>
 export default {
-    name:'adminClasses',
+    name:'adminAttendence',
     data(){
         return{
             Class:'',  

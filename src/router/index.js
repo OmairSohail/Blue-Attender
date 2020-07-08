@@ -12,7 +12,7 @@ import teacherSettings from '../views/teacherSettings.vue';
 
 
 import admindashboard from '../views/adminDashboard.vue';
-import adminClasses from '../views/adminClasses.vue';
+import adminAttendence from '../views/adminAttendence.vue';
 import adminSettings from '../views/adminSettings.vue';
 
 import signup from '../views/signup.vue';
@@ -69,9 +69,9 @@ Vue.use(VueRouter)
     component: admindashboard,
     children:[
       {
-        name:'adminClasses',
-        path:'classes',
-        component:adminClasses
+        name:'adminAttendence',
+        path:'attendence',
+        component:adminAttendence
       },
       {
         name:'adminSettings',
