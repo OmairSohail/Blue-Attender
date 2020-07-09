@@ -9,7 +9,9 @@ Vue.config.productionTip = false
 
 
 
-
+// Moment
+import moment from 'moment';
+Vue.prototype.$moment = moment;
 
 
 
