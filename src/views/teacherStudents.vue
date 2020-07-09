@@ -1,24 +1,9 @@
 <template>
   <v-app>
-      <h2>
-        Create Class
-      </h2>
-      <v-form>
-        <v-text-field
-          :rules="classRule"
-          v-model="Class"
-          label="Class"
-          type="number"
-          required
-      ></v-text-field>
-        
-        <v-btn>Add</v-btn>
-      </v-form>
-      <v-spacer></v-spacer>
-      <h2>Students</h2>
+      
         <v-card>
         <v-card-title>
-         
+           Students Attendence
           <v-spacer></v-spacer>
           <v-text-field
               v-model="search"
@@ -37,20 +22,14 @@
                 <v-icon
                   small
                   class="mr-2"
-                  @click="editItem(item)"
+                  @click="attended(item)"
                 >
-                  mdi-format-vertical-align-top
+                  mdi-check
                 </v-icon>
-                <v-icon
-                  small
-                  @click="deleteItem(item)"
-                >
-                  mdi-format-vertical-align-bottom
-                </v-icon>
-              </template>
-              <template v-slot:no-data>
+           </template>
+              <!-- <template v-slot:no-data>
                 <v-btn color="primary" @click="initialize">Reset</v-btn>
-              </template>
+              </template> -->
           </v-data-table>
       </v-card>
 
@@ -102,8 +81,25 @@ export default {
      }
    },
    methods:{
-     editItem(item){
-        console.log(item);
+     attended(item){
+        console.log(item.id)
+
+        function writeUserData(userId, name, email, date , time) {
+          this.$db.ref(`students/${userId}/${date}`).set({
+            username: name,
+            email: email,
+            date:date,
+            time:time
+          }).then(()=>{
+              console.log('Present Ticked')  
+          })
+        }
+        
+        const nowDate = this.$moment().format('DD-MM-YYYY');
+        const nowTime = this.$moment().format('LT');
+        writeUserData(item.id,item.username,item.email,nowDate,nowTime);
+
+
      }
    }
 }

@@ -22,6 +22,7 @@ import VueFirestore from 'vue-firestore'
 import app from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import 'firebase/database';
 import 'firebase/storage';
 // firebase.initializeApp(firebaseConfig);
 // if(!app.app.length)
@@ -35,6 +36,7 @@ Vue.use(VueFirestore,{
 Vue.prototype.$firebaseApp = app;
 Vue.prototype.$firebaseAuth = app.auth();
 Vue.prototype.$fs = app.firestore();
+Vue.prototype.$db = app.database();
 window.firebaseStorage = app.storage();
 
 Vue.component('siteNavbar',require('./components/siteNavbar.vue').default);
