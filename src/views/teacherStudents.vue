@@ -23,9 +23,12 @@
                   small
                   class="mr-2"
                   @click="attended(item)"
+                  v-if="!item.present"
                 >
                   mdi-check
                 </v-icon>
+
+                <v-chip color="blue lighten-1" dark>PRESENT</v-chip>
            </template>
               <!-- <template v-slot:no-data>
                 <v-btn color="primary" @click="initialize">Reset</v-btn>
@@ -46,23 +49,13 @@ export default {
         users:this.$fs.collection('blueAttender_Users')
      }
    },
-   computed:{
-     students()
-     {
-       const all = this.users.filter(x => x.type === 'Student');
-       return all;
-     },
-     teachers()
-     {
-       const all = this.users.filter(x => x.type === 'Teacher');
-       return all;
-     }
-   },
    data(){
      return{
       users:this.users,
       Class:'',
       search:'',
+      currentStudent:'',
+      presentStudent:[],
       headers:[
           {
             text: 'Roll_No',
@@ -80,12 +73,29 @@ export default {
       ]  
      }
    },
+    computed:{
+     students()
+     {
+       const all = this.users.filter(x => x.type === 'Student');
+       return all;
+     },
+     pStudent(){
+       const all = this.users.filter(x => x.id === this.currentStudent);
+       
+       return all;
+     },
+     teachers()
+     {
+       const all = this.users.filter(x => x.type === 'Teacher');
+       return all;
+     }
+   },
    methods:{
      attended(item){
-        console.log(item.id)
-
-        function writeUserData(userId, name, email, date , time) {
-          this.$db.ref(`students/${userId}/${date}`).set({
+        this.currentStudent = item.id;
+        const writeUserData = (userId, name, email, date , time) => {
+          this.$db.ref(`students/${name}/${nowDate}/`).set({
+            id:userId,
             username: name,
             email: email,
             date:date,
@@ -99,7 +109,16 @@ export default {
         const nowTime = this.$moment().format('LT');
         writeUserData(item.id,item.username,item.email,nowDate,nowTime);
 
+        this.$firestore.users.doc(item.id).update({
+            present:true
+        });
 
+        const data = this.$db.ref(`students/${item.id}/${item.username}/${nowDate}`);
+        data.on('value',(snapshot) => {
+            this.presentStudent = snapshot.val();
+        });
+
+        
      }
    }
 }

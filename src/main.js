@@ -7,8 +7,6 @@ import store from './store'
 
 Vue.config.productionTip = false
 
-<<<<<<< HEAD
-=======
 
 
 // Moment
@@ -17,7 +15,6 @@ Vue.prototype.$moment = moment;
 
 
 
->>>>>>> teacher
 // FIREBASE && VUE-FIRESTORE
 import firebaseConfig from './firebase';
 import VueFirestore from 'vue-firestore'
@@ -45,10 +42,6 @@ Vue.prototype.$firebaseApp = app;
 Vue.prototype.$firebaseAuth = app.auth();
 Vue.prototype.$fs = app.firestore();
 Vue.prototype.$db = app.database();
-<<<<<<< HEAD
-Vue.prototype.$timestamp = app.database.ServerValue.TIMESTAMP;
-=======
->>>>>>> teacher
 window.firebaseStorage = app.storage();
 
 Vue.component('siteNavbar',require('./components/siteNavbar.vue').default);
