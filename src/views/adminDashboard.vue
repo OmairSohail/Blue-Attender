@@ -6,12 +6,12 @@
       clipped
     >
       <v-list dense>
-        <v-list-item link to="/admin/dashboard/classes">
+        <v-list-item link to="/admin/dashboard/attendence">
           <v-list-item-action>
             <v-icon>mdi-file-account-outline</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>Classes</v-list-item-title>
+            <v-list-item-title>Attendence</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item link to="/admin/dashboard/settings">
