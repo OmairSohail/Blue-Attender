@@ -77,6 +77,10 @@
       </template>
     </v-snackbar>
     <site-footer/>
+
+      <v-overlay :value="overlay">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+     </v-overlay>
   </v-app>
 </template>
 
@@ -93,6 +97,7 @@ export default {
         return{ 
             users:this.users,      
             valid:false,
+            overlay:false,
             email:'',
             password:'', 
             passwordRule: [
@@ -161,8 +166,8 @@ export default {
                     }); 
 
       }
-       
-     
+      
+      const firelogin = () => {
          this.$refs.login.validate();
          this.$firebaseAuth.signInWithEmailAndPassword(this.email,this.password).then(()=>{
            
@@ -181,8 +186,7 @@ export default {
                   profileImage:null
            });
 
-            this.$refs.login.reset();
-            this.$router.replace('/');
+            
 
          }).catch((err)=>{
 
@@ -190,6 +194,17 @@ export default {
             this.snackbar = true;
 
          })  
+      }
+
+      const logging = async() => {
+        this.overlay = true;
+        await firelogin();
+        // status();
+        this.$refs.login.reset();
+        this.$router.replace('/');
+      } 
+      
+      logging();
       }
     }
 }

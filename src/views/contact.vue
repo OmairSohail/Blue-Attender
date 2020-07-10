@@ -47,7 +47,7 @@
                   ></v-text-field>
 
                   <v-textarea
-                    outlined
+                    
                     label="Message"
                     v-model="message"
                     ></v-textarea>
@@ -55,7 +55,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue lighten-1" medium>Submit</v-btn>
+                <v-btn color="blue lighten-1" medium @click="sendEmail()">Submit</v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -84,6 +84,7 @@
 </template>
 
 <script>
+import emailjs from 'emailjs-com';
 export default {
     name:'contact',
     data()
@@ -102,10 +103,25 @@ export default {
                 v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
             ],
             messageRule:[
-                  v => !!v || 'Name is required',
-                  v => (v && v.length <= 10) || 'Name must be less than 10 characters',
+                  v => !!v || 'Message is required',
+                  // v => (v && v.length <= 10) || 'Name must be less than 10 characters',
             ]
         }
+    },
+    methods:{
+          sendEmail() {
+            const templateParams = {
+                username: this.username,
+                message: this.message
+            };
+
+          emailjs.send('gmail', 'blueattender_email', templateParams,'user_EQqNIJcsOblfFbEtARAXf')
+            .then(function(response) {
+              console.log('SUCCESS!', response.status, response.text);
+            }, function(error) {
+              console.log('FAILED...', error);
+            });
+      }
     }
 
 }

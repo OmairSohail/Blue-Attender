@@ -123,8 +123,7 @@ export default {
     },
     created()
     {
-      this.$firebaseAuth.onAuthStateChanged((user)=>{
-        
+      this.$firebaseAuth.onAuthStateChanged((user)=>{ 
         if(user)
         {
            this.loggedIn = true;
@@ -132,7 +131,6 @@ export default {
            this.email = user.email;
            this.profileImage = user.photoUrl;
            this.id = user.uid;
-
         }
       })
     },
