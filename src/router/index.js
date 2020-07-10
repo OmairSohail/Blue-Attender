@@ -2,6 +2,8 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 import login from '../views/login.vue';
+import signup from '../views/signup.vue';
+
 import studentdashboard from '../views/studentDashboard.vue';
 
 
@@ -15,7 +17,7 @@ import admindashboard from '../views/adminDashboard.vue';
 import adminAttendence from '../views/adminAttendence.vue';
 import adminSettings from '../views/adminSettings.vue';
 
-import signup from '../views/signup.vue';
+import contact from '../views/contact.vue';
 
 
 Vue.use(VueRouter)
@@ -25,6 +27,11 @@ Vue.use(VueRouter)
     path: '/',
     name: 'Home',
     component: Home
+  },
+  {
+    path: '/contactus',
+    name: 'contact',
+    component: contact
   },
   {
     path: '/login',

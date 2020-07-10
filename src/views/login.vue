@@ -111,16 +111,10 @@ export default {
        ...mapActions(['createUser']),
       login()
       { 
-         this.$refs.login.validate();
-         this.$firebaseAuth.signInWithEmailAndPassword(this.email,this.password).then(()=>{
-           
-            this.snackbar = true;
-            const user = this.$firebaseAuth.currentUser;
 
-            const u = this.users.filter(x => x.email == this.email);
-            
 
-                                    // Fetch the current user's ID from Firebase Authentication.
+      const status = () => {
+         // Fetch the current user's ID from Firebase Authentication.
                     const uid = this.$firebaseAuth.currentUser.uid;
 
                     // Create a reference to this user's specific status node.
@@ -166,6 +160,16 @@ export default {
                         });
                     }); 
 
+      }
+       
+     
+         this.$refs.login.validate();
+         this.$firebaseAuth.signInWithEmailAndPassword(this.email,this.password).then(()=>{
+           
+            this.snackbar = true;
+            const user = this.$firebaseAuth.currentUser;
+
+            const u = this.users.filter(x => x.email == this.email);       
          
             this.createUser({
                   email:u[0].email,
