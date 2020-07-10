@@ -26,7 +26,7 @@
                 
               </v-toolbar>
               <v-card-text>
-                <v-form v-model="valid" ref="login"> 
+                <v-form v-model="valid" ref="contact"> 
 
                   <v-text-field
                     label="Name"
@@ -39,7 +39,7 @@
 
                   <v-text-field
                     label="Email"
-                    prepend-icon="mdi-account"
+                    prepend-icon="mdi-email"
                     type="text"
                     v-model="email"
                     :rules="emailRule"
@@ -47,7 +47,6 @@
                   ></v-text-field>
 
                   <v-textarea
-                    
                     label="Message"
                     v-model="message"
                     ></v-textarea>
@@ -114,10 +113,10 @@ export default {
                 username: this.username,
                 message: this.message
             };
-
           emailjs.send('gmail', 'blueattender_email', templateParams,'user_EQqNIJcsOblfFbEtARAXf')
-            .then(function(response) {
+            .then((response) => {
               console.log('SUCCESS!', response.status, response.text);
+              this.$refs.contact.reset();
             }, function(error) {
               console.log('FAILED...', error);
             });

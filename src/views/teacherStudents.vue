@@ -16,6 +16,7 @@
           <v-data-table
             :headers="headers"
              :items="students"
+             single-select
             :search="search"
           >
            <template v-slot:item.actions="{ item }">
@@ -23,12 +24,12 @@
                   small
                   class="mr-2"
                   @click="attended(item)"
-                  v-if="!item.present"
+                  
                 >
                   mdi-check
                 </v-icon>
 
-                <v-chip color="blue lighten-1" dark>PRESENT</v-chip>
+                <!-- <v-chip color="blue lighten-1" dark>PRESENT</v-chip> -->
            </template>
               <!-- <template v-slot:no-data>
                 <v-btn color="primary" @click="initialize">Reset</v-btn>
@@ -55,6 +56,7 @@ export default {
       Class:'',
       search:'',
       currentStudent:'',
+      studentStatus:false,
       presentStudent:[],
       headers:[
           {
@@ -77,6 +79,18 @@ export default {
      students()
      {
        const all = this.users.filter(x => x.type === 'Student');
+       const data = this.$db.ref(`students/`);
+            data.on('value',(snapshot) => {
+              if(snapshot.val())
+              {
+                // this.studentStatus = true;
+                console.log(snapshot.val());  
+                // this.presentStudent = snapshot.val();
+              }else{
+                
+              }
+            });
+
        return all;
      },
      pStudent(){
@@ -99,7 +113,8 @@ export default {
             username: name,
             email: email,
             date:date,
-            time:time
+            time:time,
+            status:'Present',
           }).then(()=>{
               console.log('Present Ticked')  
           })
@@ -107,16 +122,33 @@ export default {
         
         const nowDate = this.$moment().format('DD-MM-YYYY');
         const nowTime = this.$moment().format('LT');
-        writeUserData(item.id,item.username,item.email,nowDate,nowTime);
+        
+        const check = () => {
+           const data = this.$db.ref(`students/${item.username}/${nowDate}`);
+            data.on('value',(snapshot) => {
+              if(snapshot.val())
+              {
+                // this.studentStatus = true;
+                console.log(snapshot.val());  
+                // this.presentStudent = snapshot.val();
+              }else{
+                
+              }
+            });
+        }
 
-        this.$firestore.users.doc(item.id).update({
-            present:true
-        });
+        const checkPresence = async() => {
+           await check();
+           writeUserData(item.id,item.username,item.email,nowDate,nowTime); 
+        }
 
-        const data = this.$db.ref(`students/${item.id}/${item.username}/${nowDate}`);
-        data.on('value',(snapshot) => {
-            this.presentStudent = snapshot.val();
-        });
+       checkPresence();
+
+        // this.$firestore.users.doc(item.id).update({
+        //     present:true
+        // });
+
+       
 
         
      }
