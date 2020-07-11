@@ -20,7 +20,7 @@
 
          <v-card>
           <v-card-title>
-            Teachers
+            Students
             <v-spacer></v-spacer>
             <v-text-field
               v-model="search"
@@ -32,6 +32,7 @@
           </v-card-title>
           <v-data-table
             :headers="headers"
+            :items="getStudents"
             :search="search"
           ></v-data-table>
         </v-card>
@@ -48,6 +49,7 @@ export default {
     },
     data () {
       return {
+        userdata:[],
         users:this.users,    
         picker: new Date().toISOString().substr(0, 10),
         landscape: false,
@@ -61,18 +63,18 @@ export default {
         disabled: false,
         enableEvents: false,
         search: '',
-        headers: [
+        headers:[
           {
-            text: 'Dessert (100g serving)',
+            text: 'Roll_No',
             align: 'start',
             sortable: false,
-            value: 'name',
+            value: 'rollNo',
           },
-          { text: 'Calories', value: 'calories' },
-          { text: 'Fat (g)', value: 'fat' },
-          { text: 'Carbs (g)', value: 'carbs' },
-          { text: 'Protein (g)', value: 'protein' },
-          { text: 'Iron (%)', value: 'iron' },
+          { text: 'Name', value: 'username' },
+          { text: 'Email', value: 'email' },
+          { text: 'Class', value: 'class' },
+          { text: 'Joining', value: 'joinDate' },
+          // { text: 'Actions', value: 'actions', sortable: false },
         ],
       }
     },
@@ -83,16 +85,41 @@ export default {
       },
       processMonth () {
         const s = this.picker.split('-');
-        const m = this.$moment(s);
-        console.log(m.month(),m.year());
+        const m = this.$moment(`${s[0]}-${s[1]}`).format('YYYY-MM')
+        console.log(m);
         // console.log(m.month());
         return m;
       },
+      getStudents(){
+        const all = this.users.filter(x=> x.type === 'Student');
+
+        const check = () => {
+           const data = this.$db.ref(`students/`).orderByKey();
+            data.on('value',(snapshot) => {
+              if(snapshot.val())
+              {
+                
+                snapshot.forEach((data)=>{
+                  let key = data.key;
+                    this.userdata.push(data.val()); 
+                })  
+                
+              }else{
+
+              }
+            });
+        }
+        const dataprocess = this.$moment(this.processMonth).format('MM-YYYY');
+        console.log(this.userdata);
+       
+        console.log(filtered)
+        check();
+        return all;
+      },
       getUsers(){
-        
+            
       }
     },
-
     methods: {
       dateFunctionEvents (date) {
         const [,, day] = date.split('-')
@@ -106,7 +133,6 @@ export default {
         if ([2, 5, 12].includes(month)) return ['error', 'purple', 'rgba(0, 128, 0, 0.5)']
         return false
       },
-      
     },
 }
 </script>

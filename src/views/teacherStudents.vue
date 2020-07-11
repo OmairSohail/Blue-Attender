@@ -67,6 +67,7 @@ export default {
           },
           { text: 'Name', value: 'username' },
           { text: 'Email', value: 'email' },
+          { text: 'Class', value: 'class' },
           { text: 'Joining', value: 'joinDate' },
           { text: 'Actions', value: 'actions', sortable: false },
         ],
@@ -90,12 +91,10 @@ export default {
                 
               }
             });
-
        return all;
      },
      pStudent(){
-       const all = this.users.filter(x => x.id === this.currentStudent);
-       
+       const all = this.users.filter(x => x.id === this.currentStudent);  
        return all;
      },
      teachers()
@@ -116,13 +115,11 @@ export default {
             time:time,
             status:'Present',
           }).then(()=>{
-              console.log('Present Ticked')  
+              console.log('Present Ticked');  
           })
-        }
-        
+        }  
         const nowDate = this.$moment().format('DD-MM-YYYY');
         const nowTime = this.$moment().format('LT');
-        
         const check = () => {
            const data = this.$db.ref(`students/${item.username}/${nowDate}`);
             data.on('value',(snapshot) => {
@@ -132,25 +129,14 @@ export default {
                 console.log(snapshot.val());  
                 // this.presentStudent = snapshot.val();
               }else{
-                
               }
             });
         }
-
         const checkPresence = async() => {
            await check();
            writeUserData(item.id,item.username,item.email,nowDate,nowTime); 
         }
-
        checkPresence();
-
-        // this.$firestore.users.doc(item.id).update({
-        //     present:true
-        // });
-
-       
-
-        
      }
    }
 }
