@@ -101,42 +101,62 @@ export default {
      {
        const all = this.users.filter(x => x.type === 'Teacher');
        return all;
+     },
+     checkReport()
+     {
+       const t = $this.moment().format(`DD-MM-YYYY`);
+       const all = this.users.filter(x => x.report);
+       return all;
      }
    },
    methods:{
      attended(item){
         this.currentStudent = item.id;
-        const writeUserData = (userId, name, email, date , time) => {
-          this.$db.ref(`students/${name}/${nowDate}/`).set({
-            id:userId,
-            username: name,
-            email: email,
-            date:date,
-            time:time,
-            status:'Present',
-          }).then(()=>{
-              console.log('Present Ticked');  
-          })
+        const writeUserData = (userId, name, email, month,date , time) => {
+           this.$firestore.users.doc(userId).update({
+             report:[
+               {
+                  username: name,
+                  email: email,
+                  month:month,
+                  date:date,
+                  time:time,
+                  status:'Present',
+               }
+             ]
+           });
+            // this.$db.ref(`students/${name}/${nowDate}/`).set({
+            //   id:userId,
+            //   username: name,
+            //   email: email,
+            //   date:date,
+            //   time:time,
+            //   status:'Present',
+            // }).then(()=>{
+            //     console.log('Present Ticked');  
+            // })
         }  
+        const month = this.$moment().format('MM-YYYY');
         const nowDate = this.$moment().format('DD-MM-YYYY');
         const nowTime = this.$moment().format('LT');
         const check = () => {
-           const data = this.$db.ref(`students/${item.username}/${nowDate}`);
-            data.on('value',(snapshot) => {
-              if(snapshot.val())
-              {
-                // this.studentStatus = true;
-                console.log(snapshot.val());  
-                // this.presentStudent = snapshot.val();
-              }else{
-              }
-            });
+          //  const data = this.$db.ref(`students/${item.username}/${nowDate}`);
+          //   data.on('value',(snapshot) => {
+          //     if(snapshot.val())
+          //     {
+          //       // this.studentStatus = true;
+          //       console.log(snapshot.val());  
+          //       // this.presentStudent = snapshot.val();
+          //     }else{
+          //     }
+          //   });
         }
         const checkPresence = async() => {
            await check();
-           writeUserData(item.id,item.username,item.email,nowDate,nowTime); 
+           writeUserData(item.id,item.username,item.email,month,nowDate,nowTime); 
         }
        checkPresence();
+       
      }
    }
 }

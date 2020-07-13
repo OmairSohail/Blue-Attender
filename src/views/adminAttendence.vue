@@ -32,7 +32,7 @@
           </v-card-title>
           <v-data-table
             :headers="headers"
-            :items="getStudents"
+            
             :search="search"
           ></v-data-table>
         </v-card>
@@ -91,30 +91,29 @@ export default {
         return m;
       },
       getStudents(){
-        const all = this.users.filter(x=> x.type === 'Student');
-
+        const dataprocess = this.$moment(this.processMonth).format('MM-YYYY');
+        // const all = this.users.filter(x=> x.type === 'Student');
+        this.userdata = [];
         const check = () => {
-           const data = this.$db.ref(`students/`).orderByKey();
+           const data = this.$db.ref(`students/`).child(`${dataprocess}`);
             data.on('value',(snapshot) => {
               if(snapshot.val())
-              {
-                
+              { 
                 snapshot.forEach((data)=>{
                   let key = data.key;
-                    this.userdata.push(data.val()); 
+                  this.userdata.push(data.val()); 
                 })  
-                
               }else{
-
+                    
               }
             });
         }
-        const dataprocess = this.$moment(this.processMonth).format('MM-YYYY');
-        console.log(this.userdata);
-       
-        console.log(filtered)
         check();
-        return all;
+        
+        console.log('dataprocess',dataprocess,`${dataprocess}`);
+        const filter = this.userdata.filter(x=> console.log(x));
+        
+        return null;
       },
       getUsers(){
             
