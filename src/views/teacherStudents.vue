@@ -31,6 +31,9 @@
 
                 <!-- <v-chip color="blue lighten-1" dark>PRESENT</v-chip> -->
            </template>
+            <template v-slot:item.status="{ item }">
+                 <div class="">Present</div>
+           </template>
               <!-- <template v-slot:no-data>
                 <v-btn color="primary" @click="initialize">Reset</v-btn>
               </template> -->
@@ -84,15 +87,12 @@ export default {
           { text: 'Email', value: 'email' },
           { text: 'Class', value: 'class' },
           { text: 'Joining', value: 'joinDate' },
-          { text: 'Status', value: 'report.status' },
+          { text: 'Status', value: 'status' },
           { text: 'Actions', value: 'actions', sortable: false },
         ],
-      classRule:[
-
-      ]  
      }
    },
-    computed:{
+    computed:{ 
      students()
      {
        const data = this.$db.ref(`users/`);
@@ -108,21 +108,6 @@ export default {
        const st = l.filter(x=> x.type == 'Student');
        return st; 
      },
-     pStudent(){
-       const all = this.users.filter(x => x.id === this.currentStudent);  
-       return all;
-     },
-     teachers()
-     {
-       const all = this.users.filter(x => x.type === 'Teacher');
-       return all;
-     },
-     checkReport()
-     {
-       const t = $this.moment().format(`DD-MM-YYYY`);
-       const all = this.users.filter(x => x.report);
-       return all;
-     }
    },
    methods:{
      attended(item){
@@ -159,6 +144,7 @@ export default {
                     console.log('Already Present');
                 }    
               }else{
+                insertData(item.id,nowTime,nowDate,month);
                 console.log('no');
               }
               //  const redata = Object.values(alldata);
