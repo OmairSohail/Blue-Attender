@@ -14,7 +14,7 @@
 
       <div class="ml-4">
         <v-btn class="mx-2" to="/">Home</v-btn>
-        <v-btn class="mx-2" :to="dashboard">Dashboard</v-btn>
+        <v-btn class="mx-2" :to="`/${this.$store.state.userType}/dashboard`">Dashboard</v-btn>
         <v-btn class="mx-2" to="/aboutus">About Us</v-btn>
         <v-btn class="mx-2" to="/contactus">Contact Us</v-btn>
       </div>  
@@ -77,33 +77,35 @@
 <script>
 export default {
     name:'siteNavbar',
-    firestore(){
-      return{
-        users:this.$fs.collection('blueAttender_Users')
-      }
-    },
     computed:{
-      currentUser () {
-          //  const u = this.users.filter(x => x.email == this.email);
-          //  return u[0].id; 
-      },
-      userType () {
-          //  const user = this.users.filter(x => x.email == this.email);
-          //  return user[0].type;
-      },
       dashboard () {
-            //  if(this.userType == "Teacher")
-            //   {
-            //       return '/teacher/dashboard';
-            //     }else if(this.userType   == "Student"){
-            //       return '/student/dashboard';
-            //     }else if(this.userType   == "Admin"){
-            //       return '/admin/dashboard';
-            //   }
+          // const id = this.$firebaseAuth.currentUser.uid;
+          const ref = this.$db.ref(`users/${this.id}`);
+          ref.on('value', (snapshot) => {
+            var user = snapshot.val();
+            if(user.type == 'Student')
+            {
+               this.type = 'Student';
+               this.$store.dispatch('addType','Student');
+
+            }else if(user.type == 'Teacher')
+            {
+              //  return '/teacher/dashboard';  
+               this.type = 'Teacher';
+               this.$store.dispatch('addType','Teacher');
+            }else if(user.type == 'Admin')
+            { 
+              //  return '/admin/dashboard';     
+               this.type = 'Admin';
+               this.$store.dispatch('addType','Admin');      
+            }
+          });
+          
+        
+          
       },
-      
-    },
-    data(){
+     },
+     data(){
       return{
         users:this.users,
         loggedIn:false,
@@ -126,16 +128,13 @@ export default {
                   this.loggedIn = true;
                   // this.username = user.displayName;
                   this.email = user.email;
+                  this.username = user.displayName;
                   this.profileImage = user.photoUrl;
                   this.id = user.uid;    
                 }else{
                   console.log('user not logged in');
                 }
           })
-          
-         const r = this.users.filter(x => x.email == this.email);
-         console.log(r);
-         this.type = r[0].type;
     },
     methods:{
       signout()
@@ -152,9 +151,7 @@ export default {
             });
         } 
         const status = () => {
-          this.$firestore.users.doc(this.currentUser).update({
-              status:'offline'
-          });
+          
             // const userStatusDatabaseRef = this.$db.ref('/status/' + this.id);
             // const isOfflineForDatabase = {
             //     state: 'offline',
@@ -175,7 +172,6 @@ export default {
         const logginout = async () => {  
           this.overlay = true; 
           await logout();
-          status();
           this.overlay = false;
         }
       

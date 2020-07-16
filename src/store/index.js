@@ -5,7 +5,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user:[]
+    user:[],
+    userType:null,
   },
   mutations: {
      addUser(state,payload)
@@ -16,6 +17,10 @@ export default new Vuex.Store({
      removeUser(state,payload)
      {
         state.user = []; 
+     },
+     addUserType(state,payload)
+     {
+        state.userType = payload;
      }
   },
   actions: {
@@ -24,6 +29,9 @@ export default new Vuex.Store({
     },
     deleteUser: ({commit}) => {
       commit('removeUser')
+    },
+    addType: ({commit},payload) => {
+       commit('addUserType',payload);
     }
   },
   modules: {

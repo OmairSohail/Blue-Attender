@@ -126,20 +126,13 @@ export default {
        })
     },
     computed:{
-      userId(){
-        const a = this.users.filter(x=> x.email == this.userEmail);
-        return a[0].id; 
-      }
+      
     },
     methods:{
        ...mapActions(['createUser']),
       login()
       { 
       const status = () => {
-
-         this.$firestore.users.doc(this.userId).update({
-              status:'online'
-          });
         //  // Fetch the current user's ID from Firebase Authentication.
         //             // const uid = this.$firebaseAuth.currentUser.uid;
 
@@ -182,22 +175,9 @@ export default {
          this.$refs.login.validate();
          this.$firebaseAuth.signInWithEmailAndPassword(this.email,this.password).then(()=>{
            
-            this.snackbar = true;
-            const user = this.$firebaseAuth.currentUser;
- 
-            const u = this.users.filter(x => x.email == this.email);       
-         
-            this.createUser({
-                  email:u[0].email,
-                  id:u[0].id,
-                  joinDate:u[0].joinDate,
-                  rollNo:u[0].rollNo,
-                  type:u[0].type,
-                  username:u[0].username,
-                  profileImage:null
-           });
-
-            
+            this.snackbar = true;  
+             this.$refs.login.reset();
+           this.$router.replace('/');        
 
          }).catch((err)=>{
 
@@ -208,12 +188,11 @@ export default {
       }
 
       const logging = async() => {
-        this.overlay = true;
+        
         await firelogin();
         status();
         // status();
-        this.$refs.login.reset();
-        this.$router.replace('/');
+       
       } 
       
       logging();

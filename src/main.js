@@ -5,15 +5,11 @@ import vuetify from './plugins/vuetify';
 import router from './router'
 import store from './store'
 
-Vue.config.productionTip = false
-
-
+Vue.config.productionTip = false;
 
 // Moment
 import moment from 'moment';
 Vue.prototype.$moment = moment;
-
-
 
 // FIREBASE && VUE-FIRESTORE
 import firebaseConfig from './firebase';
@@ -35,17 +31,37 @@ Vue.use(VueFirestore,{
 });
 
 // REALTIME PRESENCE SYSTEM FIREBASE
-
-
-
 Vue.prototype.$firebaseApp = app;
 Vue.prototype.$firebaseAuth = app.auth();
+window.firebaseAuth = app.auth();
 Vue.prototype.$fs = app.firestore();
 Vue.prototype.$db = app.database();
+window.db = app.database();
 window.firebaseStorage = app.storage();
 
 Vue.component('siteNavbar',require('./components/siteNavbar.vue').default);
 Vue.component('siteFooter',require('./components/siteFooter.vue').default);
+
+app.auth().onAuthStateChanged((user)=>{
+  if(user)
+  {
+    const ref = app.database().ref(`users/${user.uid}`);
+    ref.on('value', (snapshot) => {
+      var user = snapshot.val();
+      if(user.type == 'Student')
+      {
+        store.dispatch('addType','Student');
+      }else if(user.type == 'Teacher')
+      {  
+        store.dispatch('addType','Teacher');
+      }else if(user.type == 'Admin')
+      {    
+        store.dispatch('addType','Admin');      
+      }
+    });
+  }
+})
+
 
 new Vue({
   vuetify,

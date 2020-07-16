@@ -3,9 +3,7 @@ import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 import login from '../views/login.vue';
 import signup from '../views/signup.vue';
-
 import studentdashboard from '../views/studentDashboard.vue';
-
 
 import teacherdashboard from '../views/teacherDashboard.vue';
 import teacherAttendence from '../views/teacherAttendence.vue';
@@ -36,22 +34,84 @@ Vue.use(VueRouter)
   {
     path: '/login',
     name: 'login',
-    component: login
+    component: login,
+    beforeEnter: (to,from,next) => {
+     firebaseAuth.onAuthStateChanged((user)=>{
+      if(user)
+      {
+        next('/');
+      }else{
+        next();
+      }
+     })
+    }
   },
   {
     path: '/signup',
     name: 'signup',
-    component: signup
+    component: signup,
+    beforeEnter: (to,from,next) => {
+      firebaseAuth.onAuthStateChanged((user)=>{
+       if(user)
+       {
+         next('/');
+       }else{
+         next();
+       }
+      })
+     }
   },
   {
     path: '/student/dashboard',
     name: 'studentdashboard',
-    component: studentdashboard
+    component: studentdashboard,
+    beforeEnter: (to, from, next) => {
+      firebaseAuth.onAuthStateChanged((user)=>{
+         if(user)
+         {
+          const id = firebaseAuth.currentUser.uid;
+          const ref = db.ref(`users/${id}`);
+          ref.on('value',(snapshot)=>{
+             const user = snapshot.val();
+             if(user.type == 'Student')
+             {
+               next();
+             }else{
+               next('/');
+             }
+          })
+         }else{
+           console.log('no User');
+         }
+      })
+      
+    }
   },
   {
     path: '/teacher/dashboard',
     name: 'teacherdashboard',
     component: teacherdashboard,
+    beforeEnter: (to, from, next) => {
+      firebaseAuth.onAuthStateChanged((user)=>{
+         if(user)
+         {
+          const id = firebaseAuth.currentUser.uid;
+          const ref = db.ref(`users/${id}`);
+          ref.on('value',(snapshot)=>{
+             const user = snapshot.val();
+             if(user.type == 'Teacher')
+             {
+               next();
+             }else{
+               next('/');
+             }
+          })
+         }else{
+           console.log('no User');
+         }
+      })
+      
+    },
     children:[
       {
         name: 'teacherAttendence',
@@ -74,6 +134,27 @@ Vue.use(VueRouter)
     path: '/admin/dashboard',
     name: 'admindashboard',
     component: admindashboard,
+    beforeEnter: (to, from, next) => {
+      firebaseAuth.onAuthStateChanged((user)=>{
+         if(user)
+         {
+          const id = firebaseAuth.currentUser.uid;
+          const ref = db.ref(`users/${id}`);
+          ref.on('value',(snapshot)=>{
+             const user = snapshot.val();
+             if(user.type == 'Admin')
+             {
+               next();
+             }else{
+               next('/');
+             }
+          })
+         }else{
+           console.log('no User');
+         }
+      })
+      
+    },
     children:[
       {
         name:'adminAttendence',
@@ -103,5 +184,7 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+
 
 export default router

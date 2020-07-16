@@ -185,16 +185,15 @@ export default {
        
        const randomid = Math.floor(100000 + Math.random() * 900000);
      
-       this.$firestore.users.add({
-                username:this.fullname,
-                email:this.email,
-                type:this.type,
-                joinDate:new Date().toDateString(),
-                rollNo: randomid,
-                class:this.Class
-            });
-         
-
+            // this.$firestore.users.add({
+            //     username:this.fullname,
+            //     email:this.email,
+            //     type:this.type,
+            //     joinDate:new Date().toDateString(),
+            //     rollNo: randomid,
+            //     class:this.Class
+            // });
+           
            this.$firebaseAuth.createUserWithEmailAndPassword(this.email,this.password).then(()=>{
            this.snackbarsignup = true;
            this.textsignup = 'Account Has Been Created Successfully';
@@ -206,18 +205,29 @@ export default {
              displayName:this.fullname,
            })
            
+           const dbRef = this.$db.ref(`users/${user.uid}`);
+           let data = {
+                username:this.fullname,
+                email:this.email,
+                type:this.type,
+                joinDate:new Date().toDateString(),
+                rollNo: randomid,
+                class:this.Class,
+                id:user.uid
+           }
 
-            const u = this.users.filter(x => x.email == this.email);
+            dbRef.set(data).then().catch(err => console.log(err));
+          //   const u = this.users.filter(x => x.email == this.email);
           
-            this.createUser({
-                  email:u[0].email,
-                  id:u[0].id,
-                  joinDate:u[0].joinDate,
-                  rollNo:u[0].rollNo,
-                  type:u[0].type,
-                  username:u[0].username,
-                  profileImage:null
-           });
+          //   this.createUser({
+          //         email:u[0].email,
+          //         id:u[0].id,
+          //         joinDate:u[0].joinDate,
+          //         rollNo:u[0].rollNo,
+          //         type:u[0].type,
+          //         username:u[0].username,
+          //         profileImage:null
+          //  });
 
            this.$refs.signupform.reset(); 
            

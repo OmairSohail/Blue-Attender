@@ -37,7 +37,20 @@
           </v-data-table>
       </v-card>
 
-
+      <v-snackbar
+            v-model="snackbar">
+            {{ text }}
+            <template v-slot:action="{ attrs }">
+              <v-btn
+                color="pink"
+                text
+                v-bind="attrs"
+                @click="snackbar = false"
+              >
+                Close
+              </v-btn>
+            </template>
+          </v-snackbar>
      
   </v-app>
 </template>
@@ -55,9 +68,11 @@ export default {
       users:this.users,
       Class:'',
       search:'',
-      currentStudent:'',
+      snackbar:false,
+      text:'',
+      Students:'',
       studentStatus:false,
-      presentStudent:[],
+      currentStudent:null,
       headers:[
           {
             text: 'Roll_No',
@@ -69,6 +84,7 @@ export default {
           { text: 'Email', value: 'email' },
           { text: 'Class', value: 'class' },
           { text: 'Joining', value: 'joinDate' },
+          { text: 'Status', value: 'report.status' },
           { text: 'Actions', value: 'actions', sortable: false },
         ],
       classRule:[
@@ -79,19 +95,18 @@ export default {
     computed:{
      students()
      {
-       const all = this.users.filter(x => x.type === 'Student');
-       const data = this.$db.ref(`students/`);
+       const data = this.$db.ref(`users/`);
             data.on('value',(snapshot) => {
               if(snapshot.val())
               {
-                // this.studentStatus = true;
-                console.log(snapshot.val());  
-                // this.presentStudent = snapshot.val();
-              }else{
-                
+                this.Students =  snapshot.val();
               }
             });
-       return all;
+       const makeArray = Array.of(this.Students);
+       console.log(Object.keys(this.Students));
+       const l = Object.values(this.Students); 
+       const st = l.filter(x=> x.type == 'Student');
+       return st; 
      },
      pStudent(){
        const all = this.users.filter(x => x.id === this.currentStudent);  
@@ -111,52 +126,51 @@ export default {
    },
    methods:{
      attended(item){
-        this.currentStudent = item.id;
-        const writeUserData = (userId, name, email, month,date , time) => {
-           this.$firestore.users.doc(userId).update({
-             report:[
-               {
-                  username: name,
-                  email: email,
-                  month:month,
-                  date:date,
-                  time:time,
-                  status:'Present',
-               }
-             ]
-           });
-            // this.$db.ref(`students/${name}/${nowDate}/`).set({
-            //   id:userId,
-            //   username: name,
-            //   email: email,
-            //   date:date,
-            //   time:time,
-            //   status:'Present',
-            // }).then(()=>{
-            //     console.log('Present Ticked');  
-            // })
-        }  
-        const month = this.$moment().format('MM-YYYY');
-        const nowDate = this.$moment().format('DD-MM-YYYY');
-        const nowTime = this.$moment().format('LT');
-        const check = () => {
-          //  const data = this.$db.ref(`students/${item.username}/${nowDate}`);
-          //   data.on('value',(snapshot) => {
-          //     if(snapshot.val())
-          //     {
-          //       // this.studentStatus = true;
-          //       console.log(snapshot.val());  
-          //       // this.presentStudent = snapshot.val();
-          //     }else{
-          //     }
-          //   });
-        }
-        const checkPresence = async() => {
-           await check();
-           writeUserData(item.id,item.username,item.email,month,nowDate,nowTime); 
-        }
-       checkPresence();
+        const ref = this.$db.ref(`users/`);
        
+        const month = this.$moment().format('MM');
+        const nowDate = this.$moment().format('DD-MM-YYYY');
+        const nowTime = this.$moment().format('LT');   
+        const insertData = (uid,time,date,month) => {
+              const i = this.$db.ref(`users/${uid}/report/${month}`).push().key;
+              const attendence = this.$db.ref(`users/${uid}/report/${month}`).child(i);
+              attendence.set({
+                status:'Present',
+                tickTime:time,
+                date:date
+              });  
+        }
+
+         const check = (email) => {
+           this.$db.ref(`users/${item.id}/`).on('value', (snapshot) => {
+              const alldata = snapshot.val();
+              console.log(alldata);
+              if(alldata.report)
+              {
+                const m = this.$moment().format('MM');
+                const date = this.$moment().format('DD-MM-YYYY');
+                const report = alldata.report;
+                const presentMonthReport = Object.values(report[m]);
+                const filter = presentMonthReport.find(x => x.date == date);
+                if(filter == undefined)
+                {
+                        insertData(item.id,nowTime,nowDate,month);
+                }else{
+                    console.log('Already Present');
+                }    
+              }else{
+                console.log('no');
+              }
+              //  const redata = Object.values(alldata);
+              //  const a = redata.filter(x => x.email == email);
+              //  this.currentStudent = null;
+              //  this.currentStudent = a[0];
+           })
+        }  
+        const checkPresence = async() => {
+           await check(item.email);
+        }
+        checkPresence(); 
      }
    }
 }
