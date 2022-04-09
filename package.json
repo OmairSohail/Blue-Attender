@@ -11,7 +11,7 @@
     "core-js": "^3.6.5",
     "emailjs-com": "^2.4.1",
     "firebase": "^7.15.5",
-    "moment": "^2.27.0",
+    "moment": "^2.29.2",
     "sweetalert2": "^9.17.0",
     "vue": "^2.6.11",
     "vue-firestore": "^0.3.30",
